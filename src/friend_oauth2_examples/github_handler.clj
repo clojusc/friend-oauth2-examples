@@ -1,4 +1,6 @@
 (ns friend-oauth2-examples.github-handler
+  (:use
+   [ring.util.codec :only [form-decode]])
   (:require [compojure.core :refer :all]
             [compojure.handler :as handler]
             [compojure.route :as route]
@@ -15,16 +17,17 @@
 
 (defn access-token-parsefn
   [response]
-  ((clojure.walk/keywordize-keys
-    (ring.util.codec/form-decode
-      (response :body))) :access_token))
+  (-> response
+      :body
+      form-decode
+      (get "access_token")))
 
 (def config-auth {:roles #{::user}})
 
 (def client-config
   {:client-id ""
    :client-secret ""
-   :callback {:domain "http://example.com" :path "/github.callback"}})
+   :callback {:domain "http://my-domain.com" :path "/github.callback"}})
 
 (def uri-config
   {:authentication-uri {:url "https://github.com/login/oauth/authorize"
@@ -36,9 +39,8 @@
    :access-token-uri {:url "https://github.com/login/oauth/access_token"
                       :query {:client_id (:client-id client-config)
                               :client_secret (:client-secret client-config)
-                              :grant_type "authorization_code"
-                              :redirect_uri (oauth2/format-config-uri client-config)
-                              :code ""}}})
+                              :redirect_uri (oauth2/format-config-uri client-config)}}})
+
 
 (defroutes ring-app
   (GET "/" request "<a href=\"/repos\">My Github Repositories</a><br><a href=\"/status\">Status</a>")

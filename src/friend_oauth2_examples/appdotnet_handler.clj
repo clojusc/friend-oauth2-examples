@@ -13,22 +13,19 @@
 (def client-config
   {:client-id ""
    :client-secret ""
-   :callback {:domain "http://example.com" :path "/app.net.callback"}})
+   :callback {:domain "http://my-domain.com" :path "/app.net.callback"}})
 
-;; TODO: add 'state' parameter for security.
 (def uri-config
   {:authentication-uri {:url "https://alpha.app.net/oauth/authenticate"
-                       :query {:client_id (:client-id client-config)
-                               :response_type "code"
-                               :redirect_uri (oauth2/format-config-uri client-config)
-                               :scope "stream,email"}}
+                        :query {:client_id (:client-id client-config)
+                                :response_type "code"
+                                :redirect_uri (oauth2/format-config-uri client-config)
+                                :scope "stream,email"}}
 
    :access-token-uri {:url "https://alpha.app.net/oauth/access_token"
                       :query {:client_id (:client-id client-config)
                               :client_secret (:client-secret client-config)
-                              :grant_type "authorization_code"
-                              :redirect_uri (oauth2/format-config-uri client-config)
-                              :code ""}}})
+                              :redirect_uri (oauth2/format-config-uri client-config)}}})
 
 (defroutes ring-app
   (GET "/" request "open.")
@@ -41,8 +38,6 @@
              (assoc :session session))))
   (GET "/authlink" request
        (friend/authorize #{::user} "Authorized page."))
-  (GET "/authlink2" request
-       (friend/authorize #{::user} "Authorized page 2."))
   (GET "/admin" request
        (friend/authorize #{::admin} "Only admins can see this page."))
   (friend/logout (ANY "/logout" request (ring.util.response/redirect "/"))))

@@ -1,4 +1,6 @@
 (ns friend-oauth2-examples.facebook-handler
+  (:use
+   [ring.util.codec :only [form-decode]])
   (:require [compojure.core :refer :all]
             [compojure.handler :as handler]
             [compojure.route :as route]
@@ -10,16 +12,17 @@
 ;; OAuth2 config
 (defn access-token-parsefn
   [response]
-  ((clojure.walk/keywordize-keys
-    (ring.util.codec/form-decode
-      (response :body))) :access_token))
+  (-> response
+      :body
+      form-decode
+      (get "access_token")))
 
 (def config-auth {:roles #{::user}})
 
 (def client-config
   {:client-id ""
    :client-secret ""
-   :callback {:domain "http://example.com" :path "/facebook.callback"}})
+   :callback {:domain "http://my-domain.com" :path "/facebook.callback"}})
 
 (def uri-config
   {:authentication-uri {:url "https://www.facebook.com/dialog/oauth"
@@ -29,8 +32,7 @@
    :access-token-uri {:url "https://graph.facebook.com/oauth/access_token"
                       :query {:client_id (:client-id client-config)
                               :client_secret (:client-secret client-config)
-                              :redirect_uri (oauth2/format-config-uri client-config)
-                              :code ""}}})
+                              :redirect_uri (oauth2/format-config-uri client-config)}}})
 
 (defroutes ring-app
   (GET "/" request "open.")
@@ -42,9 +44,7 @@
                    " times.</p><p>The current session: " session "</p>"))
              (assoc :session session))))
   (GET "/authlink" request
-       (friend/authorize #{::user} "Authorized page."))
-  (GET "/authlink2" request
-       (friend/authorize #{::user} "Authorized page 2."))
+       (friend/authorize #{::user} "This is an authorized page."))
   (GET "/admin" request
        (friend/authorize #{::admin} "Only admins can see this page."))
   (friend/logout (ANY "/logout" request (ring.util.response/redirect "/"))))

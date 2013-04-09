@@ -1,6 +1,6 @@
 # friend-oauth2-examples
 
-Use friend-oauth2 version 0.0.3.
+Use friend-oauth2 version 0.0.4.  *Please note that, until lein-ring is officially updated with my pull request (https://github.com/weavejester/lein-ring/pull/71) currently this will require my fork of [lein-ring](https://github.com/ddellacosta/lein-ring.git). Please clone it and run `lein install` in the cloned source directory.*
 
 Includes [Facebook (server-side authentication)](https://developers.facebook.com/docs/authentication/server-side/), [App.net](https://github.com/appdotnet/api-spec/blob/master/auth.md) and [Github](http://developer.github.com/v3/oauth/) examples using [Friend-OAuth2](https://github.com/ddellacosta/friend-oauth2), an OAuth2 workflow for [Friend](https://github.com/cemerick/friend).
 
