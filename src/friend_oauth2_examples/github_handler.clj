@@ -27,7 +27,8 @@
 (def client-config
   {:client-id ""
    :client-secret ""
-   :callback {:domain "http://example.com" :path "/github.callback"}})
+   :callback {:domain "http://localhost:3000" :path "/github.callback"}})
+
 
 (def uri-config
   {:authentication-uri {:url "https://github.com/login/oauth/authorize"
@@ -43,6 +44,13 @@
                               :redirect_uri (oauth2/format-config-uri client-config)
                               :code ""}}})
 
+(def friend-config {:allow-anon? true
+                    :workflows [(oauth2/workflow
+                                 {:client-config client-config
+                                  :uri-config uri-config
+                                  :access-token-parsefn access-token-parsefn
+                                  :config-auth config-auth})]})
+
 (defroutes ring-app
   (GET "/" request "<a href=\"/repos\">My Github Repositories</a><br><a href=\"/status\">Status</a>")
   (GET "/status" request
@@ -52,23 +60,17 @@
   (friend/logout (ANY "/logout" request (ring.util.response/redirect "/"))))
 
 (def app
-  (handler/site
-   (friend/authenticate
-    ring-app
-    {:allow-anon? true
-     :workflows [(oauth2/workflow
-                  {:client-config client-config
-                   :uri-config uri-config
-                   :access-token-parsefn access-token-parsefn
-                   :config-auth config-auth})]})))
+  (-> ring-app
+      (friend/authenticate friend-config)
+      handler/site))
 
 (defn render-status-page [request]
   (let [count (:count (:session request) 0)
         session (assoc (:session request) :count (inc count))]
     (-> (ring.util.response/response
-           (str "<p>We've hit the session page " (:count session)
-                " times.</p><p>The current session: " session "</p>"))
-         (assoc :session session))))
+         (str "<p>We've hit the session page " (:count session)
+              " times.</p><p>The current session: " session "</p>"))
+        (assoc :session session))))
 
 (defn render-repos-page 
   "Shows a list of the current users github repositories by calling the github api

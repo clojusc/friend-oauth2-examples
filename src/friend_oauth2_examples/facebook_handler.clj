@@ -21,7 +21,8 @@
 (def client-config
   {:client-id ""
    :client-secret ""
-   :callback {:domain "http://example.com" :path "/facebook.callback"}})
+   :callback {:domain "http://localhost:3000"
+              :path "/facebook.callback"}})
 
 (def uri-config
   {:authentication-uri {:url "https://www.facebook.com/dialog/oauth"
@@ -33,6 +34,14 @@
                               :client_secret (:client-secret client-config)
                               :redirect_uri (oauth2/format-config-uri client-config)
                               :code ""}}})
+
+
+(def friend-config {:allow-anon? true
+                    :workflows [(oauth2/workflow
+                                 {:client-config client-config
+                                  :uri-config uri-config
+                                  :access-token-parsefn access-token-parsefn
+                                  :config-auth config-auth})]})
 
 (defroutes ring-app
   (GET "/" request "open.")
@@ -51,13 +60,10 @@
        (friend/authorize #{::admin} "Only admins can see this page."))
   (friend/logout (ANY "/logout" request (ring.util.response/redirect "/"))))
 
+
+
 (def app
-  (handler/site
-   (friend/authenticate
-    ring-app
-    {:allow-anon? true
-     :workflows [(oauth2/workflow
-                  {:client-config client-config
-                   :uri-config uri-config
-                   :access-token-parsefn access-token-parsefn
-                   :config-auth config-auth})]})))
+  (->   ring-app
+        (friend/authenticate friend-config)
+        handler/site))
+

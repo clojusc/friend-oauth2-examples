@@ -6,14 +6,6 @@ Includes [Facebook (server-side authentication)](https://developers.facebook.com
 
 ## Running
 
-Tweak the project.clj file if the handler you want to try is commented out.
-
-```clojure
-  :ring {:handler friend-oauth2-examples.facebook-handler/app}
-;;  :ring {:handler friend-oauth2-examples.appdotnet-handler/app}
-;;  :ring {:handler friend-oauth2-examples.github-handler/app}
-```
-
 Configure your client id/secret and callback url in the handler code.
 
 ```clojure
@@ -23,9 +15,17 @@ Configure your client id/secret and callback url in the handler code.
    :callback {:domain "http://<HERE>" :path "/<AND HERE>"}})
 ```
 
-At that point, you should be able to start it up using lein:
+At that point, you should be able to start it up using lein and aliases
 
-    lein ring server(-headless)
+	lein with-profile dev,facebook server -headless
+
+or dev,appdotnet or dev,github
+
+There are also the aliseses:
+	lein facebook
+	lein appdotnet
+	lein github
+
 
 ## License
 
