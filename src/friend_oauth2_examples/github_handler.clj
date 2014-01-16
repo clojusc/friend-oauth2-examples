@@ -66,7 +66,7 @@
    with the OAuth2 access token that the friend authentication has retrieved."
   [request]
   (let [authentications (get-in request [:session :cemerick.friend/identity :authentications])
-        access-token (:access_token (second (first authentications)))
+        access-token (:identity (second (first authentications)))
         repos-response (get-github-repos access-token)]
     (str (vec (map :name repos-response)))))
 
