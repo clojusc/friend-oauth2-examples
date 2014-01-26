@@ -17,7 +17,8 @@
              :appdotnet {:ring {:handler friend-oauth2-examples.appdotnet-handler/app}}
              :facebook  {:ring {:handler friend-oauth2-examples.facebook-handler/app}}
              :github    {:ring {:handler friend-oauth2-examples.github-handler/app}}
-             :google    {:ring {:handler friend-oauth2-examples.google-handler/app}}}
+             :google    {:ring {:handler friend-oauth2-examples.google-handler/app}}
+             :multi    {:ring {:handler friend-oauth2-examples.multi-provider-handler/app}}}
 
   :aliases  {"facebook"  ["with-profile" "dev,facebook"
                           "do" "ring" "server-headless"]
@@ -26,4 +27,6 @@
              "github"    ["with-profile" "dev,github"
                           "do" "ring" "server-headless"]
              "google"    ["with-profile" "dev,google"
+                          "do" "ring" "server-headless"]
+             "multi"    ["with-profile" "dev,multi"
                           "do" "ring" "server-headless"]})
