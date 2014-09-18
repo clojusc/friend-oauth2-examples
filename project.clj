@@ -8,9 +8,13 @@
 
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [compojure "1.1.5" :exclusions [ring/ring-core org.clojure/core.incubator]]
-                 [com.cemerick/friend "0.2.0" :exclusions [ring/ring-core]]
-                 [friend-oauth2 "0.1.1" :exclusions [org.apache.httpcomponents/httpcore]]
+                 [com.cemerick/friend "0.2.1"]
+                 [friend-oauth2 "0.1.1"]
+                 [utilza "0.1.60"]
+                 [com.taoensso/timbre "3.0.1"]
                  [cheshire "5.2.0"]
+                 [com.google.http-client/google-http-client "1.15.0-rc"]
+                 [com.google.http-client/google-http-client-jackson "1.15.0-rc"] 
                  [ring-server "0.3.0" :exclusions [ring]]]
 
   :profiles {:dev       {:plugins [[lein-ring "0.8.5" :exclusions [org.clojure/clojure]]]}
@@ -26,4 +30,5 @@
              "github"    ["with-profile" "dev,github"
                           "do" "ring" "server-headless"]
              "google"    ["with-profile" "dev,google"
-                          "do" "ring" "server-headless"]})
+                          "do" "ring" "server-headless" "4567"]
+             "loggable"  ["run" "-m" "friend-oauth2-examples.server"]})
